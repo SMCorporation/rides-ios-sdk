@@ -26,13 +26,13 @@ import CoreLocation
 
 class LoginButtonTests : XCTestCase {
     
-    private var keychain: KeychainWrapper?
+    fileprivate var keychain: KeychainWrapper?
     
     override func setUp() {
         super.setUp()
         Configuration.restoreDefaults()
         Configuration.plistName = "testInfo"
-        Configuration.bundle = NSBundle(forClass: self.dynamicType)
+        Configuration.bundle = Bundle(forClass: type(of: self))
         Configuration.setSandboxEnabled(true)
         keychain = KeychainWrapper()
     }
@@ -52,7 +52,7 @@ class LoginButtonTests : XCTestCase {
         XCTAssertNil(token)
         
         let loginManager = LoginManager(accessTokenIdentifier: identifier, keychainAccessGroup: nil, loginType: .Implicit)
-        let loginButton = LoginButton(frame: CGRectZero, scopes: [], loginManager: loginManager)
+        let loginButton = LoginButton(frame: CGRect.zero, scopes: [], loginManager: loginManager)
         
         XCTAssertEqual(loginButton.buttonState, LoginButtonState.SignedOut)
         
@@ -67,7 +67,7 @@ class LoginButtonTests : XCTestCase {
         XCTAssertTrue(keychain!.setObject(token, key: identifier))
         
         let loginManager = LoginManager(accessTokenIdentifier: identifier, keychainAccessGroup: nil, loginType: .Implicit)
-        let loginButton = LoginButton(frame: CGRectZero, scopes: [], loginManager: loginManager)
+        let loginButton = LoginButton(frame: CGRect.zero, scopes: [], loginManager: loginManager)
         
         XCTAssertEqual(loginButton.buttonState, LoginButtonState.SignedIn)
         
@@ -82,13 +82,13 @@ class LoginButtonTests : XCTestCase {
         let token = TokenManager.fetchToken(identifier)
         XCTAssertNil(token)
         
-        let expectation = expectationWithDescription("Expected executeLogin() called")
+        let expectation = self.expectation(withDescription: "Expected executeLogin() called")
         
         let loginManager = LoginManagerPartialMock(accessTokenIdentifier: identifier, keychainAccessGroup: nil, loginType: .Implicit)
         loginManager.executeLoginClosure = {
             expectation.fulfill()
         }
-        let loginButton = LoginButton(frame: CGRectZero, scopes: [.Profile], loginManager: loginManager)
+        let loginButton = LoginButton(frame: CGRect.zero, scopes: [.Profile], loginManager: loginManager)
         
         loginButton.presentingViewController = UIViewController()
         XCTAssertNotNil(loginButton)
@@ -110,7 +110,7 @@ class LoginButtonTests : XCTestCase {
         XCTAssertTrue(keychain!.setObject(token, key: identifier))
         
         let loginManager = LoginManager(accessTokenIdentifier: identifier, keychainAccessGroup: nil, loginType: .Implicit)
-        let loginButton = LoginButton(frame: CGRectZero, scopes: [.Profile], loginManager: loginManager)
+        let loginButton = LoginButton(frame: CGRect.zero, scopes: [.Profile], loginManager: loginManager)
         
         loginButton.presentingViewController = UIViewController()
         XCTAssertNotNil(loginButton)

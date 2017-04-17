@@ -52,7 +52,7 @@ protocol UberAuthenticating {
      
      - returns: true if a redirect was handled, false otherwise.
      */
-    func handleRedirectRequest(request: NSURLRequest) -> Bool
+    func handleRedirectRequest(_ request: URLRequest) -> Bool
     
     /**
      Performs login for the requested scopes.

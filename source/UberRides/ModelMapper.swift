@@ -26,7 +26,7 @@ import ObjectMapper
 
 protocol UberModel: Mappable {
     init?(_ map: Map)
-    mutating func mapping(map: Map)
+    mutating func mapping(_ map: Map)
 }
 
 /**
@@ -39,7 +39,7 @@ struct ModelMapper<U where U:UberModel> {
      - parameter json: string representing the JSON information.
      - returns: an object that conforms to the Mappable protocol.
      */
-    func mapFromJSON(json: NSString) -> U? {
+    func mapFromJSON(_ json: NSString) -> U? {
         return Mapper<U>().map(json)
     }
 }

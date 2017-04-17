@@ -30,9 +30,9 @@
  - Native:   Native login (SSO via the Uber App)
  */
 @objc(UBSDKLoginType) public enum LoginType: Int {
-    case AuthorizationCode
-    case Implicit
-    case Native
+    case authorizationCode
+    case implicit
+    case native
 }
 
 @objc public protocol LoginManaging {
@@ -63,7 +63,7 @@
      
      - returns: true if the url was meant to be handled by the SDK, false otherwise
      */
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool
+    func application(_ application: UIApplication, openURL url: URL, sourceApplication: String?, annotation: AnyObject?) -> Bool
     
     /**
      Called via the RidesAppDelegate when the application becomes active. Used to determine

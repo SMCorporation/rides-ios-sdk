@@ -28,14 +28,14 @@ import OHHTTPStubs
 
 class RefreshEndpointTests: XCTestCase {
     var client: RidesClient!
-    var headers: [NSObject: AnyObject]!
+    var headers: [AnyHashable: Any]!
     let timeout: Double = 1
     
     override func setUp() {
         super.setUp()
         Configuration.restoreDefaults()
         Configuration.plistName = "testInfo"
-        Configuration.bundle = NSBundle(forClass: self.dynamicType)
+        Configuration.bundle = Bundle(forClass: self.dynamicType)
         Configuration.setSandboxEnabled(true)
         headers = ["Content-Type": "application/json"]
         client = RidesClient()
@@ -56,7 +56,7 @@ class RefreshEndpointTests: XCTestCase {
         }
         let refreshToken = "ThisIsRefresh"
         let clientID = Configuration.getClientID()
-        let expectation = expectationWithDescription("200 success response")
+        let expectation = self.expectation(withDescription: "200 success response")
         let endpoint = OAuth.Refresh(clientID: clientID, refreshToken: refreshToken)
         let request = Request(session: client.session, endpoint: endpoint)
 
@@ -69,15 +69,15 @@ class RefreshEndpointTests: XCTestCase {
 
         XCTAssertEqual(request.urlRequest.HTTPMethod, "POST")
 
-        guard let bodyData = request.urlRequest.HTTPBody, dataString = String(data: bodyData, encoding: NSUTF8StringEncoding) else {
+        guard let bodyData = request.urlRequest.HTTPBody, dataString = String(data: bodyData, encoding: String.Encoding.utf8) else {
             XCTFail("Missing HTTP Body!")
             return
         }
-        let components = NSURLComponents()
+        let components = URLComponents()
         components.query = dataString
 
-        let expectedClientID = NSURLQueryItem(name: "client_id", value: clientID)
-        let expectedRefreshToken = NSURLQueryItem(name: "refresh_token", value: refreshToken)
+        let expectedClientID = URLQueryItem(name: "client_id", value: clientID)
+        let expectedRefreshToken = URLQueryItem(name: "refresh_token", value: refreshToken)
 
         guard let queryItems = components.queryItems else {
             XCTFail("Invalid HTTP Body!")
@@ -89,7 +89,7 @@ class RefreshEndpointTests: XCTestCase {
 
 
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             }
@@ -109,7 +109,7 @@ class RefreshEndpointTests: XCTestCase {
         }
         
         let refreshToken = "ThisIsRefresh"
-        let expectation = expectationWithDescription("400 error response")
+        let expectation = self.expectation(withDescription: "400 error response")
         let endpoint = OAuth.Refresh(clientID: clientID, refreshToken: refreshToken)
         let request = Request(session: client.session, endpoint: endpoint)
         request.execute({ response in
@@ -119,7 +119,7 @@ class RefreshEndpointTests: XCTestCase {
             expectation.fulfill()
         })
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             }
@@ -136,7 +136,7 @@ class RefreshEndpointTests: XCTestCase {
             return OHHTTPStubsResponse(fileAtPath:OHPathForFile("refresh.json", self.dynamicType)!, statusCode:200, headers:self.headers)
         }
         let refreshToken = "ThisIsRefresh"
-        let expectation = expectationWithDescription("200 success response")
+        let expectation = self.expectation(withDescription: "200 success response")
         let endpoint = OAuth.Refresh(clientID: clientID, refreshToken: refreshToken)
         let request = Request(session: client.session, endpoint: endpoint)
         request.execute({ response in
@@ -146,7 +146,7 @@ class RefreshEndpointTests: XCTestCase {
             expectation.fulfill()
         })
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             }
@@ -167,7 +167,7 @@ class RefreshEndpointTests: XCTestCase {
         }
         
         let refreshToken = "ThisIsRefresh"
-        let expectation = expectationWithDescription("400 error response")
+        let expectation = self.expectation(withDescription: "400 error response")
         let endpoint = OAuth.Refresh(clientID: clientID, refreshToken: refreshToken)
         let request = Request(session: client.session, endpoint: endpoint)
         request.execute({ response in
@@ -177,7 +177,7 @@ class RefreshEndpointTests: XCTestCase {
             expectation.fulfill()
         })
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             if let error = error {
                 print("Error: \(error.localizedDescription)")
             }

@@ -27,13 +27,13 @@ import XCTest
 
 class ModalViewControllerTests: XCTestCase {
     
-    private let timeout = 2.0
+    fileprivate let timeout = 2.0
     
     override func setUp() {
         super.setUp()
         Configuration.restoreDefaults()
         Configuration.plistName = "testInfo"
-        Configuration.bundle = NSBundle(forClass: self.dynamicType)
+        Configuration.bundle = Bundle(forClass: self.dynamicType)
         Configuration.setSandboxEnabled(true)
     }
     
@@ -48,15 +48,15 @@ class ModalViewControllerTests: XCTestCase {
             init(testClosure: () -> ()) {
                 self.testClosure = testClosure
             }
-            @objc func modalViewControllerWillDismiss(modalViewController: ModalViewController) {
+            @objc func modalViewControllerWillDismiss(_ modalViewController: ModalViewController) {
                 testClosure()
             }
-            @objc func modalViewControllerDidDismiss(modalViewController: ModalViewController) {
+            @objc func modalViewControllerDidDismiss(_ modalViewController: ModalViewController) {
                 //intentionally left blank
             }
         }
         
-        let expectation = expectationWithDescription("Test willDismiss() is called")
+        let expectation = self.expectation(withDescription: "Test willDismiss() is called")
         
         let testVC = UIViewController()
         let ridesModal = ModalViewController(childViewController: testVC)
@@ -68,7 +68,7 @@ class ModalViewControllerTests: XCTestCase {
         
         ridesModal.dismiss()
         
-        waitForExpectationsWithTimeout(timeout) { (error) -> Void in
+        waitForExpectations(withTimeout: timeout) { (error) -> Void in
             XCTAssertNil(error)
         }
     }
@@ -79,15 +79,15 @@ class ModalViewControllerTests: XCTestCase {
             init(testClosure: () -> ()) {
                 self.testClosure = testClosure
             }
-            @objc func modalViewControllerWillDismiss(modalViewController: ModalViewController) {
+            @objc func modalViewControllerWillDismiss(_ modalViewController: ModalViewController) {
                 //intentionally left blank
             }
-            @objc func modalViewControllerDidDismiss(modalViewController: ModalViewController) {
+            @objc func modalViewControllerDidDismiss(_ modalViewController: ModalViewController) {
                 testClosure()
             }
         }
         
-        let expectation = expectationWithDescription("Test willDismiss() is called")
+        let expectation = self.expectation(withDescription: "Test willDismiss() is called")
         
         let testVC = UIViewController()
         let ridesModal = ModalViewController(childViewController: testVC)
@@ -99,7 +99,7 @@ class ModalViewControllerTests: XCTestCase {
         
         ridesModal.viewDidDisappear(false)
         
-        waitForExpectationsWithTimeout(timeout) { (error) -> Void in
+        waitForExpectations(withTimeout: timeout) { (error) -> Void in
             XCTAssertNil(error)
         }
     }

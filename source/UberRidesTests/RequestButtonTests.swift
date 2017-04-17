@@ -40,7 +40,7 @@ class RequestButtonTests: XCTestCase {
         super.setUp()
         Configuration.restoreDefaults()
         Configuration.plistName = "testInfo"
-        Configuration.bundle = NSBundle(forClass: self.dynamicType)
+        Configuration.bundle = Bundle(forClass: self.dynamicType)
         Configuration.setSandboxEnabled(true)
         client = RidesClient()
     }
@@ -60,11 +60,11 @@ class RequestButtonTests: XCTestCase {
     }
     
     func testCorrectSource_whenRideRequestViewRequestingBehavior() {
-        let expectation = expectationWithDescription("Test RideRequestView source parameter")
+        let expectation = self.expectation(withDescription: "Test RideRequestView source parameter")
         
-        let expectationClosure: (NSURLRequest) -> () = { request in
+        let expectationClosure: (URLRequest) -> () = { request in
             expectation.fulfill()
-            guard let url = request.URL, let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false), let items = components.queryItems else {
+            guard let url = request.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false), let items = components.queryItems else {
                 XCTAssert(false)
                 return
             }
@@ -96,14 +96,14 @@ class RequestButtonTests: XCTestCase {
         let rideRequestVC = RideRequestViewController(rideParameters: RideParametersBuilder().build(), loginManager: loginManger)
         XCTAssertNotNil(rideRequestVC.view)
         
-        let webViewMock = WebViewMock(frame: CGRectZero, configuration: WKWebViewConfiguration(), testClosure: expectationClosure)
+        let webViewMock = WebViewMock(frame: CGRect.zero, configuration: WKWebViewConfiguration(), testClosure: expectationClosure)
         rideRequestVC.rideRequestView.webView = webViewMock
 
         requestBehavior.modalRideRequestViewController.rideRequestViewController = rideRequestVC
         
         button.uberButtonTapped(button)
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertTrue(rideRequestVC.loginView.hidden)
             XCTAssertFalse(rideRequestVC.rideRequestView.hidden)
@@ -111,11 +111,11 @@ class RequestButtonTests: XCTestCase {
     }
     
     func testCorrectSource_whenDeeplinkRequestingBehavior() {
-        let expectation = expectationWithDescription("Test Deeplink source parameter")
+        let expectation = self.expectation(withDescription: "Test Deeplink source parameter")
         
-        let expectationClosure: (NSURL?) -> (Bool) = { url in
+        let expectationClosure: (URL?) -> (Bool) = { url in
             expectation.fulfill()
-            guard let url = url, let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false), let items = components.queryItems else {
+            guard let url = url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false), let items = components.queryItems else {
                 XCTAssert(false)
                 return false
             }
@@ -139,7 +139,7 @@ class RequestButtonTests: XCTestCase {
     
         button.uberButtonTapped(button)
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
         })
     }
@@ -186,7 +186,7 @@ class RequestButtonTests: XCTestCase {
             return OHHTTPStubsResponse(fileAtPath:OHPathForFile("getTimeEstimateProduct.json", self.dynamicType)!, statusCode:200, headers:nil)
         }
         
-        expectation = expectationWithDescription("information loaded")
+        expectation = self.expectation(withDescription: "information loaded")
         
         let location = CLLocation(latitude: dropoffLat, longitude: pickupLong)
         let rideParams = RideParametersBuilder().setPickupLocation(location).setProductID(productID).build()
@@ -194,7 +194,7 @@ class RequestButtonTests: XCTestCase {
         button.delegate = self
         button.loadRideInformation()
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertEqual(self.button.uberTitleLabel.text!, "Get a ride")
             XCTAssertEqual(self.button.uberMetadataLabel.text!, "4 MINS AWAY")
@@ -216,7 +216,7 @@ class RequestButtonTests: XCTestCase {
             }
         }
         
-        expectation = expectationWithDescription("information loaded")
+        expectation = self.expectation(withDescription: "information loaded")
         let pickupLocation = CLLocation(latitude: pickupLat, longitude: pickupLong)
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setPickupLocation(pickupLocation).setDropoffLocation(dropoffLocation).build()
@@ -224,7 +224,7 @@ class RequestButtonTests: XCTestCase {
         button.delegate = self
         button.loadRideInformation()
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertEqual(self.button.uberTitleLabel.text!, "Get a ride")
             XCTAssertEqual(self.button.uberMetadataLabel.text!, "4 MINS AWAY\n$15 for uberX")
@@ -244,7 +244,7 @@ class RequestButtonTests: XCTestCase {
             }
         }
     
-        errorExpectation = expectationWithDescription("price estimate error")
+        errorExpectation = self.expectation(withDescription: "price estimate error")
         let pickupLocation = CLLocation(latitude: pickupLat, longitude: pickupLong)
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setPickupLocation(pickupLocation).setDropoffLocation(dropoffLocation).build()
@@ -252,7 +252,7 @@ class RequestButtonTests: XCTestCase {
         button.delegate = self
         button.loadRideInformation()
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertEqual(self.button.uberTitleLabel.text!, "Get a ride")
             XCTAssertEqual(self.button.uberMetadataLabel.text!, "4 MINS AWAY")
@@ -273,7 +273,7 @@ class RequestButtonTests: XCTestCase {
             }
         }
         
-        errorExpectation = expectationWithDescription("time estimate error")
+        errorExpectation = self.expectation(withDescription: "time estimate error")
         let pickupLocation = CLLocation(latitude: pickupLat, longitude: pickupLong)
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setPickupLocation(pickupLocation).setDropoffLocation(dropoffLocation).build()
@@ -281,7 +281,7 @@ class RequestButtonTests: XCTestCase {
         button.delegate = self
         button.loadRideInformation()
         
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertEqual(self.button.uberTitleLabel.text!, "Get a ride")
             XCTAssertEqual(self.button.uberMetadataLabel.text!, "$15 for uberX")
@@ -302,7 +302,7 @@ class RequestButtonTests: XCTestCase {
             }
         }
 
-        expectation = expectationWithDescription("information loaded")
+        expectation = self.expectation(withDescription: "information loaded")
 
         let pickupLocation = CLLocation(latitude: pickupLat, longitude: pickupLong)
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
@@ -311,7 +311,7 @@ class RequestButtonTests: XCTestCase {
         button.delegate = self
         button.loadRideInformation()
 
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertEqual(self.button.uberTitleLabel.text!, "Get a ride")
             XCTAssertEqual(self.button.uberMetadataLabel.text!, "$15 for uberX")
@@ -330,7 +330,7 @@ class RequestButtonTests: XCTestCase {
             }
         }
 
-        expectation = expectationWithDescription("information loaded")
+        expectation = self.expectation(withDescription: "information loaded")
         let pickupLocation = CLLocation(latitude: pickupLat, longitude: pickupLong)
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setPickupLocation(pickupLocation).setDropoffLocation(dropoffLocation).build()
@@ -338,7 +338,7 @@ class RequestButtonTests: XCTestCase {
         button.delegate = self
         button.loadRideInformation()
 
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertEqual(self.button.uberTitleLabel.text!, "Get a ride")
             XCTAssertEqual(self.button.uberMetadataLabel.text!, "4 MINS AWAY")
@@ -357,7 +357,7 @@ class RequestButtonTests: XCTestCase {
             }
         }
 
-        expectation = expectationWithDescription("information loaded")
+        expectation = self.expectation(withDescription: "information loaded")
         let pickupLocation = CLLocation(latitude: pickupLat, longitude: pickupLong)
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setPickupLocation(pickupLocation).setDropoffLocation(dropoffLocation).build()
@@ -365,7 +365,7 @@ class RequestButtonTests: XCTestCase {
         button.delegate = self
         button.loadRideInformation()
 
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             XCTAssertNil(error)
             XCTAssertEqual(self.button.uberTitleLabel.text!, "Ride there with Uber")
             XCTAssertNil(self.button.uberMetadataLabel.text)
@@ -373,7 +373,7 @@ class RequestButtonTests: XCTestCase {
     }
 
     func testMissingClientTriggersErrorDelegate() {
-        errorExpectation = expectationWithDescription("Expected to receive 422 error")
+        errorExpectation = self.expectation(withDescription: "Expected to receive 422 error")
         let pickupLocation = CLLocation(latitude: pickupLat, longitude: pickupLong)
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setPickupLocation(pickupLocation).setDropoffLocation(dropoffLocation).build()
@@ -382,7 +382,7 @@ class RequestButtonTests: XCTestCase {
         button.client = nil
         button.loadRideInformation()
 
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             guard let ridesError = self.rideButtonError else {
                 XCTFail("Expected to receive 422 error")
                 return
@@ -394,14 +394,14 @@ class RequestButtonTests: XCTestCase {
     }
 
     func testMissingPickupTriggersErrorDelegate() {
-        errorExpectation = expectationWithDescription("Expected to receive 422 error")
+        errorExpectation = self.expectation(withDescription: "Expected to receive 422 error")
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setDropoffLocation(dropoffLocation).build()
         button = RideRequestButton(client: client, rideParameters:rideParams, requestingBehavior: DeeplinkRequestingBehavior())
         button.delegate = self
         button.loadRideInformation()
 
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             guard let ridesError = self.rideButtonError else {
                 XCTFail("Expected to receive 422 error")
                 return
@@ -413,14 +413,14 @@ class RequestButtonTests: XCTestCase {
     }
 
     func testUseCurrentLocationTriggersErrorDelegate() {
-        errorExpectation = expectationWithDescription("Expected to receive 422 error")
+        errorExpectation = self.expectation(withDescription: "Expected to receive 422 error")
         let dropoffLocation = CLLocation(latitude: dropoffLat, longitude: dropoffLong)
         let rideParams = RideParametersBuilder().setProductID(productID).setDropoffLocation(dropoffLocation).setPickupToCurrentLocation().build()
         button = RideRequestButton(client: client, rideParameters:rideParams, requestingBehavior: DeeplinkRequestingBehavior())
         button.delegate = self
         button.loadRideInformation()
 
-        waitForExpectationsWithTimeout(timeout, handler: { error in
+        waitForExpectations(withTimeout: timeout, handler: { error in
             guard let ridesError = self.rideButtonError else {
                 XCTFail("Expected to receive 422 error")
                 return
@@ -446,7 +446,7 @@ class RequestButtonTests: XCTestCase {
 }
 
 private class UIViewControllerMock : UIViewController {
-    override func presentViewController(viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?) {
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?) {
         viewControllerToPresent.viewWillAppear(flag)
         viewControllerToPresent.viewDidAppear(flag)
         
@@ -462,11 +462,11 @@ private class UIViewControllerMock : UIViewController {
 // MARK: RequestButtonDelegate
 
 extension RequestButtonTests: RideRequestButtonDelegate {
-    func rideRequestButtonDidLoadRideInformation(button: RideRequestButton) {
+    func rideRequestButtonDidLoadRideInformation(_ button: RideRequestButton) {
         expectation?.fulfill()
     }
     
-    func rideRequestButton(button: RideRequestButton, didReceiveError error: RidesError) {
+    func rideRequestButton(_ button: RideRequestButton, didReceiveError error: RidesError) {
         self.rideButtonError = error
         errorExpectation?.fulfill()
     }

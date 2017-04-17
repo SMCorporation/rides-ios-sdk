@@ -43,13 +43,13 @@ class RideRequestDataBuilder {
     let productIDKey = "product_id"
     let surgeConfirmationKey = "surge_confirmation_id"
     
-    private var rideParameters: RideParameters
+    fileprivate var rideParameters: RideParameters
     
     init(rideParameters: RideParameters) {
         self.rideParameters = rideParameters
     }
     
-    func build() -> NSData? {
+    func build() -> Data? {
         var data = [String: AnyObject]()
         
         if let productID = rideParameters.productID {
@@ -94,9 +94,9 @@ class RideRequestDataBuilder {
             data["\(surgeConfirmationKey)"] = surgeConfirmation
         }
         
-        var bodyData: NSData?
+        var bodyData: Data?
         do {
-            bodyData = try NSJSONSerialization.dataWithJSONObject(data, options: .PrettyPrinted)
+            bodyData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
             return bodyData
         } catch { }
         return nil
